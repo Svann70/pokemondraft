@@ -59,6 +59,23 @@
 
   .tier-header { gap: 10px; flex-wrap: wrap; }
   .tier-header__pts { margin-left: 0; margin-top: 4px; }
+
+  /* Navbar responsive tweaks */
+  .navbar {
+    padding: 0 16px;
+  }
+  .navbar__brand {
+    font-size: 0.9rem;
+    gap: 6px;
+  }
+  .navbar__brand svg {
+    width: 16px;
+    height: 16px;
+  }
+  .nav-tab {
+    padding: 0 8px;
+    font-size: 0.75rem;
+  }
 }
 
 /* ---- Small phones ---- */
@@ -77,9 +94,16 @@
   .pokemon-card__claim-btn { font-size: 0.6rem; padding: 3px 8px; }
 
   .stats-bar {
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 8px;
+  }
+  .stat-item {
+    flex: 1 1 45%; 
+    justify-content: center;
+    text-align: center;
+    padding: 6px 10px;
   }
 
   .controls-wrapper {

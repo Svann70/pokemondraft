@@ -24,10 +24,10 @@ export function renderAdmin() {
           <h2>Admin Authentication</h2>
           <p>Please log in to edit the Pokémon Draft Board.</p>
           <div style="margin:20px 0;">
-            <input type="password" id="adminPassword" class="search-box__input" style="padding:12px 16px;text-align:center" placeholder="Password (admin123)">
+            <input type="password" id="adminPassword" class="search-box__input" style="padding:12px 16px;text-align:center" placeholder="Password">
           </div>
           <button class="filter-btn active" id="adminLoginBtn" style="width:100%;padding:14px;font-size:1rem;">Access Dashboard</button>
-          <p id="adminLoginError" style="color:var(--accent-pink);margin-top:12px;font-size:0.85rem;display:none;">Incorrect password. Try 'admin123'.</p>
+          <p id="adminLoginError" style="color:var(--accent-pink);margin-top:12px;font-size:0.85rem;display:none;">Incorrect password.</p>
         </div>
       </div>
     `;

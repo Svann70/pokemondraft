@@ -220,7 +220,11 @@
 }
 .pokemon-card:hover .pokemon-card__sprite { transform: scale(1.15); }
 
-.pokemon-card__name { font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; color: var(--text-primary); }
+.pokemon-card__name {
+  font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; color: var(--text-primary);
+  word-break: break-word;
+  line-height: 1.2;
+}
 .pokemon-card__cost { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px; }
 .pokemon-card__type-dots { display: flex; justify-content: center; gap: 4px; margin-top: 6px; }
 .type-dot { width: 8px; height: 8px; border-radius: 50%; opacity: 0.8; }
@@ -238,6 +242,10 @@
   cursor: pointer;
   transition: all 0.25s;
   letter-spacing: 0.5px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .pokemon-card__claim-btn:hover {
   background: rgba(255, 209, 102, 0.25);
@@ -249,6 +257,9 @@
   color: var(--accent-pink);
   cursor: default;
   font-size: 0.65rem;
+  white-space: normal;
+  word-break: break-word;
+  padding: 4px 8px;
 }
 
 /* ----- Sidebar ----- */

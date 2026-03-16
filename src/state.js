@@ -61,7 +61,7 @@ export function updatePokemonCost(name, cost) {
 
 export function loginAdmin(password) {
   // Simple hardcoded password for the client-side demo
-  if (password === 'admin123') {
+  if (password === 'ipanganteng') {
     sessionStorage.setItem('admin_auth', 'true');
     setState({ isAdminLoggedIn: true });
     return true;
