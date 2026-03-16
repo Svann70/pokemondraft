@@ -1,0 +1,56 @@
+/* ===================================================================
+   Layout — app wrapper, container, sidebar positioning
+   =================================================================== */
+
+.app-wrapper {
+  display: flex;
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+.app-container {
+  flex: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+  min-width: 0;           /* prevent flex child from overflowing */
+}
+
+/* ===================================================================
+   Header
+   =================================================================== */
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.header__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  background: var(--accent-gold-dim);
+  border: 1px solid rgba(255, 209, 102, 0.25);
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-gold);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.header__title {
+  font-size: clamp(1.8rem, 5vw, 3.2rem);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.header__subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 300;
+}

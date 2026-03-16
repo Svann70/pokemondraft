@@ -1,0 +1,45 @@
+/* ===================================================================
+   Tier-specific color overrides
+   =================================================================== */
+
+/* Mythic */
+.tier-mythic .tier-header__indicator { background: var(--tier-mythic); }
+.tier-mythic .tier-header__title     { color: #ffd166; }
+.tier-mythic .tier-header__pts       { color: #ffd166; }
+.tier-mythic .pokemon-card__cost     { color: #ffd166; }
+.tier-mythic .tier-header__icon svg  { stroke: #ffd166; }
+
+/* Epic */
+.tier-epic .tier-header__indicator { background: var(--tier-epic); }
+.tier-epic .tier-header__title     { color: #a78bfa; }
+.tier-epic .tier-header__pts       { color: #a78bfa; }
+.tier-epic .pokemon-card__cost     { color: #a78bfa; }
+.tier-epic .tier-header__icon svg  { stroke: #a78bfa; }
+
+/* Rare */
+.tier-rare .tier-header__indicator { background: var(--tier-rare); }
+.tier-rare .tier-header__title     { color: #06d6a0; }
+.tier-rare .tier-header__pts       { color: #06d6a0; }
+.tier-rare .pokemon-card__cost     { color: #06d6a0; }
+.tier-rare .tier-header__icon svg  { stroke: #06d6a0; }
+
+/* Uncommon */
+.tier-uncommon .tier-header__indicator { background: var(--tier-uncommon); }
+.tier-uncommon .tier-header__title     { color: #38bdf8; }
+.tier-uncommon .tier-header__pts       { color: #38bdf8; }
+.tier-uncommon .pokemon-card__cost     { color: #38bdf8; }
+.tier-uncommon .tier-header__icon svg  { stroke: #38bdf8; }
+
+/* Common */
+.tier-common .tier-header__indicator { background: var(--tier-common); }
+.tier-common .tier-header__title     { color: #94a3b8; }
+.tier-common .tier-header__pts       { color: #94a3b8; }
+.tier-common .pokemon-card__cost     { color: #94a3b8; }
+.tier-common .tier-header__icon svg  { stroke: #94a3b8; }
+
+/* Unassigned */
+.tier-unassigned .tier-header__indicator { background: #e879a0; }
+.tier-unassigned .tier-header__title     { color: #e879a0; }
+.tier-unassigned .tier-header__pts       { color: #e879a0; }
+.tier-unassigned .pokemon-card__cost     { color: #e879a0; }
+.tier-unassigned .tier-header__icon svg  { stroke: #e879a0; }

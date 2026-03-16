@@ -1,0 +1,159 @@
+/* ===================================================================
+   Responsive / Mobile-first overrides
+   =================================================================== */
+
+/* ---- Tablet (sidebar collapses) ---- */
+@media (max-width: 960px) {
+  .app-wrapper {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-width: unset;
+    height: auto;
+    position: static;
+    border-left: none;
+    border-top: 1px solid var(--border-subtle);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+    padding: 20px 16px;
+  }
+
+  .sidebar__title,
+  .sidebar__hint {
+    grid-column: 1 / -1;
+  }
+
+  .hide-mobile { display: none !important; }
+}
+
+/* ---- Medium phones ---- */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 20px 14px 40px;
+  }
+
+  .pokemon-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+  }
+
+  .pokemon-card {
+    padding: 14px 8px 12px;
+  }
+
+  .pokemon-card__sprite,
+  .pokemon-card__sprite-wrap {
+    width: 72px;
+    height: 72px;
+  }
+
+  .stats-bar { gap: 10px; }
+  .stat-item { padding: 8px 14px; }
+
+  .controls-wrapper { gap: 12px; margin-bottom: 24px; }
+  .filter-btn { padding: 8px 14px; font-size: 0.78rem; flex-shrink: 0; }
+  .filter-scroll > * { flex-shrink: 0; }
+
+  .tier-header { gap: 10px; flex-wrap: wrap; }
+  .tier-header__pts { margin-left: 0; margin-top: 4px; }
+}
+
+/* ---- Small phones ---- */
+@media (max-width: 480px) {
+  .header__title {
+    font-size: 1.5rem;
+  }
+
+  .pokemon-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .pokemon-card__name   { font-size: 0.72rem; }
+  .pokemon-card__cost   { font-size: 0.65rem; }
+  .pokemon-card__claim-btn { font-size: 0.6rem; padding: 3px 8px; }
+
+  .stats-bar {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .controls-wrapper {
+    margin-bottom: 20px;
+  }
+
+  .search-box {
+    max-width: 100%;
+  }
+
+  .filter-btn {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+
+  /* Hide the tooltip on touch devices */
+  .pokedex-tooltip {
+    display: none !important;
+  }
+  
+  .login-box { padding: 24px 16px; }
+  .login-box h2 { font-size: 1.3rem; }
+}
+
+/* ---- Extra small ---- */
+@media (max-width: 360px) {
+  .pokemon-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .pokemon-card {
+    padding: 10px 6px 10px;
+  }
+
+  .pokemon-card__sprite,
+  .pokemon-card__sprite-wrap {
+    width: 56px;
+    height: 56px;
+  }
+
+  .stat-item {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ---- Touch device enhancements ---- */
+@media (hover: none) and (pointer: coarse) {
+  .pokemon-card {
+    cursor: default;
+  }
+
+  .pokemon-card:hover {
+    transform: none;
+    border-color: var(--border-subtle);
+    box-shadow: none;
+    background: var(--bg-card);
+  }
+
+  .pokemon-card:active {
+    transform: scale(0.97);
+    background: var(--bg-card-hover);
+    transition: transform 0.1s;
+  }
+
+  /* Make claim buttons bigger for touch */
+  .pokemon-card__claim-btn {
+    padding: 8px 16px;
+    font-size: 0.75rem;
+  }
+
+  .filter-btn {
+    padding: 12px 18px;
+    font-size: 0.85rem;
+  }
+}

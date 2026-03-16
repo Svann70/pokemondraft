@@ -1,0 +1,48 @@
+/* ===================================================================
+   Design Tokens — single source of truth for colors, spacing, radii
+   =================================================================== */
+
+:root {
+  /* Backgrounds */
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.08);
+  --bg-glass: rgba(255, 255, 255, 0.06);
+
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(255, 255, 255, 0.15);
+
+  /* Text */
+  --text-primary: #f0f0f5;
+  --text-secondary: #8a8a9a;
+  --text-muted: #55556a;
+
+  /* Accent */
+  --accent-gold: #ffd166;
+  --accent-gold-dim: rgba(255, 209, 102, 0.15);
+  --accent-green: #06d6a0;
+  --accent-pink: #ef476f;
+  --accent-blue: #118ab2;
+  --accent-purple: #8338ec;
+
+  /* Tier palette */
+  --tier-mythic: #ffd166;
+  --tier-epic: #a78bfa;
+  --tier-rare: #06d6a0;
+  --tier-uncommon: #38bdf8;
+  --tier-common: #94a3b8;
+
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 30px rgba(255, 209, 102, 0.1);
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  /* Typography */
+  --font-family: 'Outfit', 'Montserrat', sans-serif;
+}
