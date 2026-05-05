@@ -69,9 +69,10 @@ export function renderBoard() {
     grouped[p.cost].push(p);
   });
   
-  // Combine all active costs to render tiers even if empty
+  // Combine all active costs: default tiers + overrides + actual pokemon costs
   const activeCosts = new Set(Object.keys(TIER_CONFIG).map(Number));
   Object.keys(tierConfigOverrides).forEach(c => activeCosts.add(Number(c)));
+  Object.keys(grouped).forEach(c => activeCosts.add(Number(c))); // include costs from actual pokemon!
   
   activeCosts.forEach(c => {
     if (!grouped[c]) grouped[c] = [];
