@@ -1,9 +1,9 @@
 /**
- * Item Market sidebar renderer.
+ * Sidebar renderer — Player Standings + Item Market (with claiming).
  */
 
 import { ITEMS } from '../data/pokemon.js';
-import { getState, getMergedPokemon } from '../state.js';
+import { getState, getMergedPokemon, claimItem } from '../state.js';
 import { STARTING_BUDGET } from '../data/config.js';
 
 export function renderSidebar() {
@@ -11,53 +11,91 @@ export function renderSidebar() {
   const playerList = document.getElementById('playerList');
   if (!itemList || !playerList) return;
 
-  // Render Items
-  itemList.innerHTML = ITEMS.map(
-    (item) => `
-    <div class="item-card">
-      <div class="item-card__name">${item.name}</div>
+  const { claimedMap, itemClaimedMap } = getState();
+  const { tiered } = getMergedPokemon();
+
+  // ========== Render Items with Claim ==========
+  itemList.innerHTML = ITEMS.map((item) => {
+    const owner = itemClaimedMap[item.name];
+    const isClaimed = !!owner;
+    return `
+    <div class="item-card ${isClaimed ? 'item-claimed' : ''}">
+      <div class="item-card__top">
+        <div class="item-card__name">${item.name}</div>
+        <button class="item-claim-btn ${isClaimed ? 'taken' : ''}" data-item="${item.name}">
+          ${isClaimed ? `<span class="item-owner-name">${owner}</span>` : 'Claim'}
+        </button>
+      </div>
       <div class="item-card__desc">${item.desc}</div>
     </div>
-  `
-  ).join('');
+  `;
+  }).join('');
 
-  // Render Players
-  const { claimedMap } = getState();
-  const { tiered } = getMergedPokemon();
-  
+  // Attach item claim events
+  itemList.querySelectorAll('.item-claim-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const name = btn.dataset.item;
+      const current = itemClaimedMap[name];
+
+      if (current) {
+        if (confirm(`Unclaim "${name}" from ${current}?`)) {
+          claimItem(name, null);
+        }
+      } else {
+        const player = prompt(`Player claiming ${name}:`);
+        if (player && player.trim()) {
+          claimItem(name, player.trim());
+        }
+      }
+    });
+  });
+
+  // ========== Render Player Standings ==========
   const playerStats = {};
   
   for (const [pk, owner] of Object.entries(claimedMap)) {
-    const ownerUpper = owner.toUpperCase();
-    if (!playerStats[ownerUpper]) {
-      playerStats[ownerUpper] = { name: owner, spent: 0, pokes: 0 };
+    const ownerKey = owner.toUpperCase();
+    if (!playerStats[ownerKey]) {
+      playerStats[ownerKey] = { name: owner, spent: 0, pokes: 0, items: 0 };
     }
     const data = tiered.find(p => p.name === pk);
     if (data && data.cost) {
-      playerStats[ownerUpper].spent += data.cost;
+      playerStats[ownerKey].spent += data.cost;
     }
-    playerStats[ownerUpper].pokes += 1;
+    playerStats[ownerKey].pokes += 1;
+  }
+
+  // Count items per player
+  for (const [, owner] of Object.entries(itemClaimedMap)) {
+    const ownerKey = owner.toUpperCase();
+    if (!playerStats[ownerKey]) {
+      playerStats[ownerKey] = { name: owner, spent: 0, pokes: 0, items: 0 };
+    }
+    playerStats[ownerKey].items += 1;
   }
   
   const players = Object.values(playerStats).sort((a,b) => b.spent - a.spent);
   
   if (players.length === 0) {
-    playerList.innerHTML = `<div style="font-size:0.9rem; color:var(--text-muted); text-align:center; padding: 10px;">No players yet</div>`;
+    playerList.innerHTML = `<div class="player-empty">No players yet</div>`;
     return;
   }
   
-  playerList.innerHTML = players.map(p => {
+  playerList.innerHTML = players.map((p, i) => {
     const rem = STARTING_BUDGET - p.spent;
     const color = rem < 0 ? 'var(--accent-pink)' : 'var(--accent-green)';
+    const rank = i + 1;
     return `
-      <div class="item-card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-        <div>
-          <div class="item-card__name">${p.name} <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted)">(${p.pokes} Pkmn)</span></div>
-          <div class="item-card__desc">Spent: ${p.spent} pts</div>
+      <div class="player-card">
+        <div class="player-card__rank">#${rank}</div>
+        <div class="player-card__info">
+          <div class="player-card__name">${p.name}</div>
+          <div class="player-card__meta">${p.pokes} Pkmn${p.items > 0 ? ` · ${p.items} Item${p.items > 1 ? 's' : ''}` : ''} · Spent ${p.spent} pts</div>
         </div>
-        <div style="text-align:right">
-          <div style="font-size:1.1rem; font-weight:700; color:${color}">${rem}</div>
-          <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px">Left</div>
+        <div class="player-card__budget">
+          <div class="player-card__budget-val" style="color:${color}">${rem}</div>
+          <div class="player-card__budget-label">Left</div>
         </div>
       </div>
     `;

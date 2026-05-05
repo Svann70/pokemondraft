@@ -1,5 +1,5 @@
 /* ===================================================================
-   Responsive / Mobile-first overrides
+   Responsive / Mobile-first overrides — COMPLETE OVERHAUL
    =================================================================== */
 
 /* ---- Tablet (sidebar collapses) ---- */
@@ -15,15 +15,11 @@
     position: static;
     border-left: none;
     border-top: 1px solid var(--border-subtle);
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 8px;
     padding: 20px 16px;
   }
 
-  .sidebar__title,
-  .sidebar__hint {
-    grid-column: 1 / -1;
+  .sidebar__section {
+    margin-bottom: 20px;
   }
 
   .hide-mobile { display: none !important; }
@@ -32,82 +28,204 @@
 /* ---- Medium phones ---- */
 @media (max-width: 768px) {
   .app-container {
-    padding: 20px 14px 40px;
+    padding: 16px 10px 30px;
   }
 
+  /* ----- Navbar mobile ----- */
+  .navbar {
+    padding: 0 12px;
+    height: 48px;
+  }
+  .navbar__brand {
+    font-size: 0.85rem;
+    gap: 5px;
+  }
+  .navbar__brand svg {
+    width: 14px;
+    height: 14px;
+  }
+  .nav-tab {
+    padding: 0 10px;
+    font-size: 0.72rem;
+    height: 48px;
+  }
+
+  /* ----- Header ----- */
+  .header {
+    margin-bottom: 20px;
+  }
+  .header__badge {
+    font-size: 0.65rem;
+    padding: 4px 12px;
+    margin-bottom: 10px;
+  }
+  .header__title {
+    font-size: 1.4rem;
+  }
+  .header__subtitle {
+    font-size: 0.8rem;
+  }
+
+  /* ----- Stats ----- */
+  .stats-bar {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .stat-item {
+    padding: 6px 12px;
+    gap: 6px;
+  }
+  .stat-item__value { font-size: 1rem; }
+  .stat-item__label { font-size: 0.7rem; }
+
+  /* ----- Controls / Filters ----- */
+  .controls-wrapper { gap: 10px; margin-bottom: 16px; }
+  .search-box { max-width: 100%; }
+  .search-box__input { padding: 10px 14px 10px 38px; font-size: 0.82rem; }
+  .filter-btn { padding: 7px 12px; font-size: 0.72rem; flex-shrink: 0; }
+  .filter-scroll > * { flex-shrink: 0; }
+
+  /* ----- Tier Sections ----- */
+  .tier-section { margin-bottom: 24px; }
+  .tier-header {
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .tier-header__indicator { height: 22px; }
+  .tier-header__icon svg { width: 14px; height: 14px; }
+  .tier-header__title { font-size: 0.9rem; }
+  .tier-header__count { font-size: 0.7rem; }
+  .tier-header__pts {
+    margin-left: 0;
+    margin-top: 0;
+    font-size: 0.72rem;
+    padding: 3px 10px;
+  }
+
+  /* ----- Pokemon Grid ----- */
   .pokemon-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+    gap: 8px;
   }
 
   .pokemon-card {
-    padding: 14px 8px 12px;
+    padding: 12px 6px 10px;
+    border-radius: 10px;
   }
 
   .pokemon-card__sprite,
   .pokemon-card__sprite-wrap {
-    width: 72px;
-    height: 72px;
+    width: 64px;
+    height: 64px;
   }
 
-  .stats-bar { gap: 10px; }
-  .stat-item { padding: 8px 14px; }
+  .pokemon-card__name { font-size: 0.72rem; margin-bottom: 2px; }
+  .pokemon-card__cost { font-size: 0.65rem; }
+  .pokemon-card__type-dots { gap: 3px; margin-top: 4px; }
+  .type-dot { width: 6px; height: 6px; }
+  .pokemon-card__claim-btn { font-size: 0.62rem; padding: 4px 8px; margin-top: 6px; }
+  .pokemon-card__claim-btn.taken { font-size: 0.58rem; padding: 3px 6px; }
 
-  .controls-wrapper { gap: 12px; margin-bottom: 24px; }
-  .filter-btn { padding: 8px 14px; font-size: 0.78rem; flex-shrink: 0; }
-  .filter-scroll > * { flex-shrink: 0; }
-
-  .tier-header { gap: 10px; flex-wrap: wrap; }
-  .tier-header__pts { margin-left: 0; margin-top: 4px; }
-
-  /* Navbar responsive tweaks */
-  .navbar {
-    padding: 0 16px;
+  /* ----- Sidebar Mobile ----- */
+  .sidebar {
+    padding: 16px 10px;
   }
-  .navbar__brand {
+  .sidebar__title {
     font-size: 0.9rem;
-    gap: 6px;
+    margin-bottom: 12px;
   }
-  .navbar__brand svg {
-    width: 16px;
-    height: 16px;
+  .sidebar__title svg {
+    width: 15px;
+    height: 15px;
   }
-  .nav-tab {
-    padding: 0 8px;
-    font-size: 0.75rem;
+
+  /* Player cards in a horizontal scroll on mobile */
+  .player-card {
+    min-width: 200px;
   }
+
+  /* Item cards compact */
+  .item-card {
+    padding: 10px;
+    margin-bottom: 6px;
+  }
+  .item-card__name { font-size: 0.8rem; }
+  .item-card__desc { font-size: 0.68rem; }
+
+  /* ----- Modal ----- */
+  .modal-content {
+    padding: 18px !important;
+    border-radius: 10px !important;
+  }
+  .modal-content h2 {
+    font-size: 1.2rem !important;
+  }
+
+  /* ----- Admin table ----- */
+  .admin-table th,
+  .admin-table td {
+    padding: 8px 6px;
+    font-size: 0.8rem;
+  }
+  .admin-input {
+    font-size: 0.8rem;
+    padding: 6px 8px;
+  }
+  .admin-header { flex-direction: column; gap: 12px; }
+  .admin-header__text h2 { font-size: 1.3rem; }
+  .admin-header__text p { font-size: 0.8rem; }
+
+  /* Hide tooltip on touch devices */
+  .pokedex-tooltip {
+    display: none !important;
+  }
+
+  .login-box { padding: 24px 16px; }
+  .login-box h2 { font-size: 1.3rem; }
 }
 
 /* ---- Small phones ---- */
 @media (max-width: 480px) {
   .header__title {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
   }
 
   .pokemon-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: 6px;
   }
 
-  .pokemon-card__name   { font-size: 0.72rem; }
-  .pokemon-card__cost   { font-size: 0.65rem; }
-  .pokemon-card__claim-btn { font-size: 0.6rem; padding: 3px 8px; }
+  .pokemon-card {
+    padding: 10px 4px 8px;
+  }
+
+  .pokemon-card__sprite,
+  .pokemon-card__sprite-wrap {
+    width: 52px;
+    height: 52px;
+    margin-bottom: 6px;
+  }
+
+  .pokemon-card__name { font-size: 0.65rem; }
+  .pokemon-card__cost { font-size: 0.6rem; }
+  .pokemon-card__claim-btn { font-size: 0.58rem; padding: 3px 6px; }
 
   .stats-bar {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
   }
   .stat-item {
     flex: 1 1 45%; 
     justify-content: center;
     text-align: center;
-    padding: 6px 10px;
+    padding: 6px 8px;
   }
 
   .controls-wrapper {
-    margin-bottom: 20px;
+    margin-bottom: 14px;
   }
 
   .search-box {
@@ -115,17 +233,9 @@
   }
 
   .filter-btn {
-    padding: 8px 12px;
-    font-size: 0.75rem;
+    padding: 6px 10px;
+    font-size: 0.7rem;
   }
-
-  /* Hide the tooltip on touch devices */
-  .pokedex-tooltip {
-    display: none !important;
-  }
-  
-  .login-box { padding: 24px 16px; }
-  .login-box h2 { font-size: 1.3rem; }
 }
 
 /* ---- Extra small ---- */
@@ -136,19 +246,22 @@
   }
 
   .pokemon-card {
-    padding: 10px 6px 10px;
+    padding: 8px 4px 8px;
   }
 
   .pokemon-card__sprite,
   .pokemon-card__sprite-wrap {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
   }
 
   .stat-item {
     width: 100%;
     justify-content: center;
   }
+
+  .tier-header__title { font-size: 0.8rem; }
+  .tier-header__count { font-size: 0.65rem; }
 }
 
 /* ---- Touch device enhancements ---- */
@@ -172,12 +285,18 @@
 
   /* Make claim buttons bigger for touch */
   .pokemon-card__claim-btn {
-    padding: 8px 16px;
-    font-size: 0.75rem;
+    padding: 6px 12px;
+    font-size: 0.68rem;
+    min-height: 28px;
   }
 
   .filter-btn {
-    padding: 12px 18px;
-    font-size: 0.85rem;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+  }
+
+  .item-claim-btn {
+    min-height: 30px;
+    font-size: 0.72rem;
   }
 }

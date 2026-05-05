@@ -18,6 +18,7 @@ const state = {
   claimedMap: saved.claimedMap || {},       // pokemonName -> playerName
   costOverrides: saved.costOverrides || {}, // pokemonName -> newCost (number or null)
   tierConfigOverrides: saved.tierConfigOverrides || {}, // tierCost -> { label, className, icon }
+  itemClaimedMap: saved.itemClaimedMap || {},  // itemName -> playerName
   pokedexCache: {},     // pokemonName -> flavor text
 };
 
@@ -31,11 +32,12 @@ export function setState(updates, fromDatabase = false) {
   Object.assign(state, updates);
   
   // Save to localStorage if persistent fields changed
-  if (updates.claimedMap !== undefined || updates.costOverrides !== undefined || updates.tierConfigOverrides !== undefined) {
+  if (updates.claimedMap !== undefined || updates.costOverrides !== undefined || updates.tierConfigOverrides !== undefined || updates.itemClaimedMap !== undefined) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       claimedMap: state.claimedMap,
       costOverrides: state.costOverrides,
-      tierConfigOverrides: state.tierConfigOverrides
+      tierConfigOverrides: state.tierConfigOverrides,
+      itemClaimedMap: state.itemClaimedMap
     }));
     
     // Sync to Supabase if enabled and update is local
@@ -45,7 +47,8 @@ export function setState(updates, fromDatabase = false) {
         state_data: {
           claimedMap: state.claimedMap,
           costOverrides: state.costOverrides,
-          tierConfigOverrides: state.tierConfigOverrides
+          tierConfigOverrides: state.tierConfigOverrides,
+          itemClaimedMap: state.itemClaimedMap
         }
       };
       
@@ -74,7 +77,8 @@ if (isSupabaseEnabled) {
         setState({
           claimedMap: data.state_data.claimedMap || {},
           costOverrides: data.state_data.costOverrides || {},
-          tierConfigOverrides: data.state_data.tierConfigOverrides || {}
+          tierConfigOverrides: data.state_data.tierConfigOverrides || {},
+          itemClaimedMap: data.state_data.itemClaimedMap || {}
         }, true);
       }
     });
@@ -90,7 +94,8 @@ if (isSupabaseEnabled) {
           setState({
             claimedMap: payload.new.state_data.claimedMap || {},
             costOverrides: payload.new.state_data.costOverrides || {},
-            tierConfigOverrides: payload.new.state_data.tierConfigOverrides || {}
+            tierConfigOverrides: payload.new.state_data.tierConfigOverrides || {},
+            itemClaimedMap: payload.new.state_data.itemClaimedMap || {}
           }, true);
         }
       }
@@ -111,6 +116,7 @@ window.addEventListener('storage', (e) => {
       state.claimedMap = newData.claimedMap || {};
       state.costOverrides = newData.costOverrides || {};
       state.tierConfigOverrides = newData.tierConfigOverrides || {};
+      state.itemClaimedMap = newData.itemClaimedMap || {};
       
       // Notify all components to re-render
       listeners.forEach((fn) => fn(state));
@@ -128,6 +134,16 @@ export function claimPokemon(name, player) {
     newMap[name] = player;
   }
   setState({ claimedMap: newMap });
+}
+
+export function claimItem(itemName, player) {
+  const newMap = { ...state.itemClaimedMap };
+  if (player === null) {
+    delete newMap[itemName];
+  } else {
+    newMap[itemName] = player;
+  }
+  setState({ itemClaimedMap: newMap });
 }
 
 export function updatePokemonCost(name, cost) {
