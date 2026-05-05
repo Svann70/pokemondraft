@@ -145,16 +145,48 @@ function attachCardInteractions() {
           claimPokemon(name, null); // Unclaim
         }
       } else {
-        const player = prompt(`Player claiming ${name}:`);
-        if (player && player.trim()) {
-          const playerName = player.trim();
-          const { tiered } = getMergedPokemon();
-          const pData = tiered.find(p => p.name === name);
-          const pkCost = pData && pData.cost ? pData.cost : 0;
+        const modal = document.getElementById('claimModal');
+        const input = document.getElementById('claimModalInput');
+        const details = document.getElementById('claimModalDetails');
+        const pointsInfo = document.getElementById('claimModalPointsInfo');
+        const confirmBtn = document.getElementById('claimModalConfirm');
+        const cancelBtn = document.getElementById('claimModalCancel');
+        
+        if (!modal) {
+          // Fallback if modal is missing for some reason
+          const player = prompt(`Player claiming ${name}:`);
+          if (player && player.trim()) claimPokemon(name, player.trim());
+          return;
+        }
+        
+        const { tiered } = getMergedPokemon();
+        const pData = tiered.find(p => p.name === name);
+        const pkCost = pData && pData.cost ? pData.cost : 0;
+        
+        // Show details
+        details.innerHTML = `
+          <img src="${spriteUrl(name)}" style="width:48px;height:48px;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))">
+          <div>
+            <div style="font-weight:700;font-size:1.1rem;color:var(--text-primary)">${name}</div>
+            <div style="font-size:0.85rem;color:var(--text-secondary)">Cost: <span style="color:var(--accent-gold);font-weight:700">${pkCost} pts</span></div>
+          </div>
+        `;
+        
+        input.value = '';
+        pointsInfo.innerHTML = '';
+        
+        const updatePointsInfo = () => {
+          const playerName = input.value.trim();
+          if (!playerName) {
+            pointsInfo.innerHTML = '';
+            confirmBtn.style.opacity = '0.5';
+            confirmBtn.style.pointerEvents = 'none';
+            return;
+          }
           
-          claimPokemon(name, playerName);
+          confirmBtn.style.opacity = '1';
+          confirmBtn.style.pointerEvents = 'auto';
           
-          // Calculate spent points
           const updatedState = getState();
           let spent = 0;
           for (const [pk, owner] of Object.entries(updatedState.claimedMap)) {
@@ -164,13 +196,50 @@ function attachCardInteractions() {
             }
           }
           
-          const remaining = STARTING_BUDGET - spent;
+          const remainingBefore = STARTING_BUDGET - spent;
+          const remainingAfter = remainingBefore - pkCost;
           
-          // Small timeout to allow DOM to update before blocking with alert
-          setTimeout(() => {
-            alert(`Berhasil diklaim oleh ${playerName}!\nHarga: ${pkCost} pts\nSisa poin: ${remaining} pts`);
-          }, 50);
-        }
+          const color = remainingAfter < 0 ? 'var(--accent-pink)' : 'var(--accent-green)';
+          pointsInfo.innerHTML = `
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; color:var(--text-secondary)">
+              <span>Sisa Poin Saat Ini:</span> <b>${remainingBefore} pts</b>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding-top:4px; border-top:1px solid var(--border-subtle)">
+              <span>Sisa Poin Setelah Klaim:</span> <b style="color:${color}">${remainingAfter} pts</b>
+            </div>
+          `;
+        };
+        
+        input.oninput = updatePointsInfo;
+        updatePointsInfo(); // initial state
+        
+        modal.classList.add('active');
+        setTimeout(() => input.focus(), 10);
+        
+        // Cleanup functions
+        const cleanup = () => {
+          modal.classList.remove('active');
+          confirmBtn.onclick = null;
+          cancelBtn.onclick = null;
+          input.oninput = null;
+        };
+        
+        cancelBtn.onclick = cleanup;
+        
+        // allow enter key to confirm
+        input.onkeydown = (e) => {
+          if (e.key === 'Enter' && input.value.trim()) {
+            confirmBtn.click();
+          }
+        };
+        
+        confirmBtn.onclick = () => {
+          const playerName = input.value.trim();
+          if (playerName) {
+            claimPokemon(name, playerName);
+            cleanup();
+          }
+        };
       }
     });
   });

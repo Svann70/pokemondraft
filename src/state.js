@@ -5,6 +5,7 @@
  */
 
 import { TIERED_POKEMON, UNASSIGNED_POKEMON } from './data/pokemon.js';
+import { supabase, isSupabaseEnabled } from './supabase.js';
 
 const STORAGE_KEY = 'delicious_draft_v2';
 const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
@@ -25,7 +26,7 @@ export function getState() {
   return { ...state };
 }
 
-export function setState(updates) {
+export function setState(updates, fromDatabase = false) {
   Object.assign(state, updates);
   
   // Save to localStorage if persistent fields changed
@@ -34,9 +35,61 @@ export function setState(updates) {
       claimedMap: state.claimedMap,
       costOverrides: state.costOverrides
     }));
+    
+    // Sync to Supabase if enabled and update is local
+    if (isSupabaseEnabled && !fromDatabase) {
+      const payload = {
+        id: 1, 
+        state_data: {
+          claimedMap: state.claimedMap,
+          costOverrides: state.costOverrides
+        }
+      };
+      
+      supabase
+        .from('draft_state')
+        .upsert(payload)
+        .then(({ error }) => {
+          if (error) console.error("Supabase sync error:", error);
+        });
+    }
   }
   
   listeners.forEach((fn) => fn(state));
+}
+
+// Subscribe to Supabase real-time updates and fetch initial state
+if (isSupabaseEnabled) {
+  // 1. Fetch initial state
+  supabase
+    .from('draft_state')
+    .select('state_data')
+    .eq('id', 1)
+    .single()
+    .then(({ data, error }) => {
+      if (data && data.state_data) {
+        setState({
+          claimedMap: data.state_data.claimedMap || {},
+          costOverrides: data.state_data.costOverrides || {}
+        }, true);
+      }
+    });
+
+  // 2. Listen for realtime changes
+  supabase
+    .channel('draft_state_changes')
+    .on('postgres_changes', 
+      { event: '*', schema: 'public', table: 'draft_state', filter: 'id=eq.1' }, 
+      (payload) => {
+        if (payload.new && payload.new.state_data) {
+          setState({
+            claimedMap: payload.new.state_data.claimedMap || {},
+            costOverrides: payload.new.state_data.costOverrides || {}
+          }, true);
+        }
+      }
+    )
+    .subscribe();
 }
 
 export function subscribe(fn) {
