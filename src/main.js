@@ -30,6 +30,7 @@ subscribe(() => {
   renderFilters();
   renderBoard();
   renderAdmin();
+  renderSidebar();
 });
 
 // Search input binding (Draft Board)

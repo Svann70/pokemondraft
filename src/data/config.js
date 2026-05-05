@@ -33,3 +33,4 @@ export const TYPE_COLORS = {
 
 export const SPRITE_BASE_URL = 'https://play.pokemonshowdown.com/sprites/ani/';
 export const POKEAPI_BASE_URL = 'https://pokeapi.co/api/v2/pokemon-species/';
+export const STARTING_BUDGET = 100; // Default budget for players

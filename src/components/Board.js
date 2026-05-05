@@ -3,7 +3,7 @@
  * Manages tier sections, card rendering, drag-drop, and claiming.
  */
 
-import { TIER_CONFIG, TYPE_COLORS, SVG_ICONS } from '../data/config.js';
+import { TIER_CONFIG, TYPE_COLORS, SVG_ICONS, STARTING_BUDGET } from '../data/config.js';
 import { getMergedPokemon, getState, claimPokemon, updatePokemonCost } from '../state.js';
 import { spriteUrl } from '../utils/helpers.js';
 import { showTooltip, hideTooltip } from './Tooltip.js';
@@ -147,7 +147,29 @@ function attachCardInteractions() {
       } else {
         const player = prompt(`Player claiming ${name}:`);
         if (player && player.trim()) {
-          claimPokemon(name, player.trim());
+          const playerName = player.trim();
+          const { tiered } = getMergedPokemon();
+          const pData = tiered.find(p => p.name === name);
+          const pkCost = pData && pData.cost ? pData.cost : 0;
+          
+          claimPokemon(name, playerName);
+          
+          // Calculate spent points
+          const updatedState = getState();
+          let spent = 0;
+          for (const [pk, owner] of Object.entries(updatedState.claimedMap)) {
+            if (owner.toLowerCase() === playerName.toLowerCase()) {
+              const data = tiered.find(p => p.name === pk);
+              if (data && data.cost) spent += data.cost;
+            }
+          }
+          
+          const remaining = STARTING_BUDGET - spent;
+          
+          // Small timeout to allow DOM to update before blocking with alert
+          setTimeout(() => {
+            alert(`Berhasil diklaim oleh ${playerName}!\nHarga: ${pkCost} pts\nSisa poin: ${remaining} pts`);
+          }, 50);
         }
       }
     });
