@@ -44,6 +44,22 @@ export function subscribe(fn) {
   return () => listeners.delete(fn);
 }
 
+// Sync state across multiple tabs on the same device
+window.addEventListener('storage', (e) => {
+  if (e.key === STORAGE_KEY) {
+    try {
+      const newData = JSON.parse(e.newValue || '{}');
+      state.claimedMap = newData.claimedMap || {};
+      state.costOverrides = newData.costOverrides || {};
+      
+      // Notify all components to re-render
+      listeners.forEach((fn) => fn(state));
+    } catch (err) {
+      console.error("Error syncing state from storage:", err);
+    }
+  }
+});
+
 export function claimPokemon(name, player) {
   const newMap = { ...state.claimedMap };
   if (player === null) {
