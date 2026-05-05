@@ -3,14 +3,14 @@
  * Displays a table of all pokemon to edit costs quickly.
  */
 
-import { getMergedPokemon, getState, updatePokemonCost, resetAllData, loginAdmin, logoutAdmin } from '../state.js';
-import { TYPE_COLORS, SVG_ICONS } from '../data/config.js';
+import { getMergedPokemon, getState, updatePokemonCost, updateTierConfig, resetAllData, loginAdmin, logoutAdmin } from '../state.js';
+import { TYPE_COLORS, SVG_ICONS, TIER_CONFIG } from '../data/config.js';
 
 export function renderAdmin() {
   const container = document.getElementById('adminContent');
   if (!container) return;
 
-  const { activeTab, currentSearch, isAdminLoggedIn } = getState();
+  const { activeTab, currentSearch, isAdminLoggedIn, tierConfigOverrides } = getState();
   if (activeTab !== 'admin') {
     container.style.display = 'none';
     return;
@@ -58,6 +58,12 @@ export function renderAdmin() {
   // Filter based on search
   const filtered = allPokemon.filter(p => p.name.toLowerCase().includes(currentSearch));
 
+  // Determine active tiers (from default config + any currently used costs + any overrides)
+  const activeCosts = new Set(Object.keys(TIER_CONFIG).map(Number));
+  tiered.forEach(p => activeCosts.add(p.cost));
+  Object.keys(tierConfigOverrides).forEach(c => activeCosts.add(Number(c)));
+  const sortedCosts = Array.from(activeCosts).sort((a, b) => b - a);
+
   let html = `
     <div class="admin-header">
       <div class="admin-header__text">
@@ -74,6 +80,24 @@ export function renderAdmin() {
         <button class="filter-btn" id="logoutDataBtn">
           Logout
         </button>
+      </div>
+    </div>
+
+    <!-- Tier Config Editor -->
+    <div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border-subtle); margin-bottom:24px;">
+      <h3 style="margin-top:0; font-size:1.1rem; margin-bottom:16px;">Configure Tiers</h3>
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:12px;">
+        ${sortedCosts.map(cost => {
+          const override = tierConfigOverrides[cost];
+          const def = TIER_CONFIG[cost];
+          const label = override ? override.label : (def ? def.label : `${cost} pts Tier`);
+          return `
+            <div style="display:flex; align-items:center; gap:8px; padding:12px; background:var(--bg-glass); border-radius:8px; border:1px solid var(--border-color);">
+              <span style="font-weight:700; color:var(--accent-gold); min-width:50px;">${cost} pts</span>
+              <input type="text" class="search-box__input tier-label-input" data-cost="${cost}" value="${label}" style="padding:6px 12px; font-size:0.85rem;" placeholder="Tier Name">
+            </div>
+          `;
+        }).join('')}
       </div>
     </div>
 
@@ -151,6 +175,15 @@ export function renderAdmin() {
       const val = e.target.value.trim();
       const num = val === '' ? null : Number(val);
       updatePokemonCost(name, num);
+    });
+  });
+
+  // Tier Inputs
+  document.querySelectorAll('.tier-label-input').forEach(input => {
+    input.addEventListener('change', (e) => {
+      const cost = Number(e.target.dataset.cost);
+      const val = e.target.value.trim();
+      updateTierConfig(cost, val === '' ? null : val);
     });
   });
 

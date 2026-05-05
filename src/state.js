@@ -17,6 +17,7 @@ const state = {
   currentSearch: '',
   claimedMap: saved.claimedMap || {},       // pokemonName -> playerName
   costOverrides: saved.costOverrides || {}, // pokemonName -> newCost (number or null)
+  tierConfigOverrides: saved.tierConfigOverrides || {}, // tierCost -> { label, className, icon }
   pokedexCache: {},     // pokemonName -> flavor text
 };
 
@@ -30,10 +31,11 @@ export function setState(updates, fromDatabase = false) {
   Object.assign(state, updates);
   
   // Save to localStorage if persistent fields changed
-  if (updates.claimedMap !== undefined || updates.costOverrides !== undefined) {
+  if (updates.claimedMap !== undefined || updates.costOverrides !== undefined || updates.tierConfigOverrides !== undefined) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       claimedMap: state.claimedMap,
-      costOverrides: state.costOverrides
+      costOverrides: state.costOverrides,
+      tierConfigOverrides: state.tierConfigOverrides
     }));
     
     // Sync to Supabase if enabled and update is local
@@ -42,7 +44,8 @@ export function setState(updates, fromDatabase = false) {
         id: 1, 
         state_data: {
           claimedMap: state.claimedMap,
-          costOverrides: state.costOverrides
+          costOverrides: state.costOverrides,
+          tierConfigOverrides: state.tierConfigOverrides
         }
       };
       
@@ -70,7 +73,8 @@ if (isSupabaseEnabled) {
       if (data && data.state_data) {
         setState({
           claimedMap: data.state_data.claimedMap || {},
-          costOverrides: data.state_data.costOverrides || {}
+          costOverrides: data.state_data.costOverrides || {},
+          tierConfigOverrides: data.state_data.tierConfigOverrides || {}
         }, true);
       }
     });
@@ -81,10 +85,12 @@ if (isSupabaseEnabled) {
     .on('postgres_changes', 
       { event: '*', schema: 'public', table: 'draft_state', filter: 'id=eq.1' }, 
       (payload) => {
+        console.log("Supabase Realtime Payload Received:", payload);
         if (payload.new && payload.new.state_data) {
           setState({
             claimedMap: payload.new.state_data.claimedMap || {},
-            costOverrides: payload.new.state_data.costOverrides || {}
+            costOverrides: payload.new.state_data.costOverrides || {},
+            tierConfigOverrides: payload.new.state_data.tierConfigOverrides || {}
           }, true);
         }
       }
@@ -104,6 +110,7 @@ window.addEventListener('storage', (e) => {
       const newData = JSON.parse(e.newValue || '{}');
       state.claimedMap = newData.claimedMap || {};
       state.costOverrides = newData.costOverrides || {};
+      state.tierConfigOverrides = newData.tierConfigOverrides || {};
       
       // Notify all components to re-render
       listeners.forEach((fn) => fn(state));
@@ -126,6 +133,22 @@ export function claimPokemon(name, player) {
 export function updatePokemonCost(name, cost) {
   const newOverrides = { ...state.costOverrides, [name]: cost };
   setState({ costOverrides: newOverrides });
+}
+
+export function updateTierConfig(cost, label, iconHtml = null) {
+  const newOverrides = { ...state.tierConfigOverrides };
+  if (label === null) {
+    // Delete tier override
+    delete newOverrides[cost];
+  } else {
+    const existing = newOverrides[cost] || {};
+    newOverrides[cost] = {
+      label,
+      className: existing.className || 'tier-common',
+      icon: iconHtml || existing.icon || '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>'
+    };
+  }
+  setState({ tierConfigOverrides: newOverrides });
 }
 
 export function loginAdmin(password) {

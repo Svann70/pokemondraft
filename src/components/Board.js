@@ -51,7 +51,7 @@ export function renderBoard() {
   const main = document.getElementById('mainContent');
   if (!main) return;
 
-  const { activeTab, currentSearch } = getState();
+  const { activeTab, currentSearch, tierConfigOverrides } = getState();
   if (activeTab !== 'board') {
     main.style.display = 'none';
     return;
@@ -69,13 +69,15 @@ export function renderBoard() {
     grouped[p.cost].push(p);
   });
   
-  // Also make sure active dynamic tiers from config exist (like 18, 15, 12, 9, 6)
-  // so people can drag into empty tiers!
-  [18, 15, 12, 9, 6].forEach(c => {
+  // Combine all active costs to render tiers even if empty
+  const activeCosts = new Set(Object.keys(TIER_CONFIG).map(Number));
+  Object.keys(tierConfigOverrides).forEach(c => activeCosts.add(Number(c)));
+  
+  activeCosts.forEach(c => {
     if (!grouped[c]) grouped[c] = [];
   });
   
-  const sortedCosts = Object.keys(grouped).map(Number).sort((a, b) => b - a);
+  const sortedCosts = Array.from(activeCosts).sort((a, b) => b - a);
 
   // Empty state
   if (sortedCosts.length === 0 && filteredUnassigned.length === 0) {
@@ -91,15 +93,23 @@ export function renderBoard() {
 
   // Tier sections
   sortedCosts.forEach((cost, sIdx) => {
-    const tier = TIER_CONFIG[cost] || { label: `${cost} pts Tier`, className: 'tier-common', icon: SVG_ICONS.star };
     const pokemons = grouped[cost];
+    // Skip empty dynamic tiers if they are completely custom and empty (optional)
+    // but here we just render them anyway so drag & drop works.
+    
+    const override = tierConfigOverrides[cost];
+    const def = TIER_CONFIG[cost];
+    
+    const tierLabel = override ? override.label : (def ? def.label : `${cost} pts Tier`);
+    const tierClass = override ? override.className : (def ? def.className : 'tier-common');
+    const tierIcon = override ? override.icon : (def ? def.icon : SVG_ICONS.star);
 
     html += `
-      <section class="tier-section ${tier.className}" style="animation-delay:${Math.min(sIdx * 0.08, 0.5)}s">
+      <section class="tier-section ${tierClass}" style="animation-delay:${Math.min(sIdx * 0.08, 0.5)}s">
         <div class="tier-header">
           <div class="tier-header__indicator"></div>
-          <span class="tier-header__icon" style="color:inherit">${tier.icon}</span>
-          <span class="tier-header__title">${tier.label}</span>
+          <span class="tier-header__icon" style="color:inherit">${tierIcon}</span>
+          <span class="tier-header__title">${tierLabel}</span>
           <span class="tier-header__count">${pokemons.length} Pokémon</span>
           <span class="tier-header__pts">${cost} pts each</span>
         </div>

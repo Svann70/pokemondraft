@@ -10,7 +10,7 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 export let supabase = null;
 export let isSupabaseEnabled = false;
 
-if (supabaseUrl !== 'https://fwsedruoaivgdgiwwaqj.supabase.co') {
+if (supabaseUrl && supabaseUrl.startsWith('http')) {
   try {
     supabase = createClient(supabaseUrl, supabaseKey);
     isSupabaseEnabled = true;
